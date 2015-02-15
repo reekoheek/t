@@ -1,0 +1,8 @@
+{
+    "name": "reekoheek/t",
+    "version": "0.1.0",
+    "profile": "php",
+    "autoload": {
+        "T": "src/"
+    }
+}
