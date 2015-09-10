@@ -12,7 +12,9 @@ T Template is just simple PHP template you can do plain php scripting there. Ste
 
 ## How to Install
 
-TBD, Sorry right now it comes ONLY with reek package management (my selfish package management which is not published yet, but soon will be available).
+You can use [pas](https://github.com/xinix-technology/pas) for easy management of your php project.
+
+Why not composer? Because we at xinix use pas.
 
 But you can fork it and try to use. It is just common PSR-4 PHP source codes at src base directory. So I think it is easy to setup for you, PHP pals.
 
