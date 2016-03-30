@@ -12,11 +12,7 @@ T Template is just simple PHP template you can do plain php scripting there. Ste
 
 ## How to Install
 
-You can use [pas](https://github.com/xinix-technology/pas) for easy management of your php project.
-
-Why not composer? Because we at xinix use pas.
-
-But you can fork it and try to use. It is just common PSR-4 PHP source codes at src base directory. So I think it is easy to setup for you, PHP pals.
+You can use composer to install this thing.
 
 ## How to Use
 
@@ -90,7 +86,7 @@ T Template will trigger first section registered as initial section to show, so 
 Extending '/home' template is easy. You can put '/layout' as new template inside base template directory and then put this line at first line of your template.
 
 ```php
-<?php $t->extend('/layout') ?>
+<?php $t->extend('layout') ?>
 
 ...
 ```

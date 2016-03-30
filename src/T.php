@@ -3,6 +3,7 @@
 namespace T;
 
 use ROH\Util\Collection;
+use DomainException as Exception;
 
 class T extends Collection
 {
@@ -72,7 +73,7 @@ class T extends Collection
         $t = $this;
         $resolved = $this->resolve($template);
         if (!$resolved) {
-            throw new \Exception('Cannot extend unresolved template: '.$template);
+            throw new Exception('Cannot extend unresolved template: '.$template);
         }
         include $resolved;
     }
@@ -112,13 +113,13 @@ class T extends Collection
 
         $resolved = $this->resolve($template);
         if (!$resolved) {
-            throw new \Exception('Cannot render unresolved template: '.$template);
+            throw new Exception('Cannot render unresolved template: '.$template);
         }
 
         include $resolved;
 
         if (count($this->sections) === 0) {
-            throw new \Exception('No section to render for template: '.$template);
+            throw new Exception('No section to render for template: '.$template);
         }
 
         reset($this->sections);
