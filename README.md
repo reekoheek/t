@@ -52,7 +52,7 @@ I recommend you to use sections.
 <header>
     <a href="#">Title</a>
 </header>
-<?php } ?>
+<?php }) ?>
 ```
 
 #### Using section inside another section, as follows,
@@ -66,19 +66,19 @@ I recommend you to use sections.
     <title>Document</title>
 </head>
 <body>
-    <?php $t->show('header') ?>
-    <?php $t->show('body') ?>
-    <?php $t->show('footer') ?> 
+    <?php $this->show('header') ?>
+    <?php $this->show('body') ?>
+    <?php $this->show('footer') ?> 
 </body>
 </html>
-<?php } ?>
+<?php }) ?>
 
 <?php $t->section('body', function() { ?>
 <div>
     <h1>Lorem Ipsum</h1>
     <p>Curae lacus amet. Lacus etiam mauris bibendum morbi sollicitudin curae. Nulla morbi. Etiam magna dolor duis sociis est ornare ad felis. Velit donec rutrum libero vivamus eget nunc dis nunc torquent sit. Class lorem porta eleifend id leo. Massa porta rutrum in tempor accumsan erat sem risus tincidunt. Velit fames. Velit risus erat nullam congue ante condimentum dis lectus dapibus cras arcu. Nulla netus pulvinar curabitur eu phasellus.</p>
 </div>
-<?php } ?>
+<?php }) ?>
 ``` 
 
 Don't worry, if you manage to use section that is not created yet. It won't break. Feel free to plan your template.

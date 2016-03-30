@@ -2,13 +2,15 @@
 
 namespace T;
 
-class T
+use ROH\Util\Collection;
+
+class T extends Collection
 {
     /**
      * File extension to use as t
      * @var string
      */
-    protected $extension = '.php';
+    protected $extension = '.t.php';
 
     /**
      * Sections collected from single template generation
@@ -20,15 +22,27 @@ class T
      * Base directory to resolve templates
      * @var string
      */
-    protected $baseDirectory;
+    protected $baseDirectories = [
+        [], [], [], [], [],
+        [], [], [], [], [],
+    ];
 
     /**
      * Constructor
      * @return void
      */
-    public function __construct($baseDirectory)
+    public function __construct($baseDirectories)
     {
-        $this->baseDirectory = $baseDirectory;
+        if (is_string($baseDirectories)) {
+            $this->baseDirectories[0][] = $baseDirectories;
+        } else {
+            $this->baseDirectories[0] = $baseDirectories;
+        }
+    }
+
+    public function addBaseDirectory($baseDirectory, $group = 9)
+    {
+        $this->baseDirectories[$group][] = $baseDirectory;
     }
 
     /**
@@ -38,7 +52,14 @@ class T
      */
     public function resolve($template)
     {
-        return $this->baseDirectory . '/' . $template.$this->extension;
+        foreach ($this->baseDirectories as $baseDirectoryGroup) {
+            foreach ($baseDirectoryGroup as $baseDirectory) {
+                $resolved =  $baseDirectory . '/' . ltrim($template, '/') . $this->extension;
+            }
+            if (is_readable($resolved)) {
+                return $resolved;
+            }
+        }
     }
 
     /**
@@ -49,7 +70,11 @@ class T
     public function extend($template)
     {
         $t = $this;
-        include $this->resolve($template);
+        $resolved = $this->resolve($template);
+        if (!$resolved) {
+            throw new \Exception('Cannot extend unresolved template: '.$template);
+        }
+        include $resolved;
     }
 
     /**
@@ -68,11 +93,11 @@ class T
      * @param  string
      * @return void
      */
-    public function show($name)
+    public function show($name, $data = array())
     {
         if (isset($this->sections[$name]) === true) {
             $fn = $this->sections[$name];
-            $fn();
+            $fn($data);
         }
     }
 
@@ -81,15 +106,25 @@ class T
      * @param  string
      * @return void
      */
-    public function render($template)
+    public function render($template, $data = array())
     {
         $t = $this;
-        include $this->resolve($template);
+
+        $resolved = $this->resolve($template);
+        if (!$resolved) {
+            throw new \Exception('Cannot render unresolved template: '.$template);
+        }
+
+        include $resolved;
+
+        if (count($this->sections) === 0) {
+            throw new \Exception('No section to render for template: '.$template);
+        }
 
         reset($this->sections);
         $name = key($this->sections);
-        $fn = $this->sections[$name];
 
-        $fn();
+        $fn = $this->sections[$name];
+        $fn($data);
     }
 }
