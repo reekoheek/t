@@ -12,7 +12,7 @@ class Renderer implements RendererInterface
 
     protected $t;
 
-    public function __construct($options)
+    public function __construct(array $options)
     {
         $this->options = $options;
     }
@@ -54,7 +54,7 @@ class Renderer implements RendererInterface
         }
         $t = $this->getT();
         $t['context'] = $context;
-        $t['bundle'] = $context['route.bundle']->getHandler();
+        $t['bundle'] = $context['route.bundle'];
         $t->write($resolved[0], $context->getState(), $context);
     }
 

@@ -1,7 +1,8 @@
 {
-    "name": "reekoheek/test",
+    "name": "reekoheek/t",
     "require": {
-        "reekoheek/util": "^1.0.0"
+        "php": "^5.4",
+        "reekoheek/util": "^1.1.0"
     },
     "require-dev": {
     },
