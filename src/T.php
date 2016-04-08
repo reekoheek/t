@@ -17,7 +17,7 @@ class T extends Collection
      * Sections collected from single template generation
      * @var array
      */
-    protected $sections = array();
+    protected $sections = [];
 
     /**
      * Base directory to resolve templates
@@ -56,9 +56,9 @@ class T extends Collection
         foreach ($this->baseDirectories as $baseDirectoryGroup) {
             foreach ($baseDirectoryGroup as $baseDirectory) {
                 $resolved =  $baseDirectory . '/' . ltrim($template, '/') . $this->extension;
-            }
-            if (is_readable($resolved)) {
-                return $resolved;
+                if (is_readable($resolved)) {
+                    return $resolved;
+                }
             }
         }
     }
@@ -94,7 +94,7 @@ class T extends Collection
      * @param  string
      * @return void
      */
-    public function show($name, $data = array())
+    public function show($name, $data = [])
     {
         if (isset($this->sections[$name]) === true) {
             $fn = $this->sections[$name];
@@ -103,11 +103,11 @@ class T extends Collection
     }
 
     /**
-     * Render template
+     * Write template
      * @param  string
      * @return void
      */
-    public function render($template, $data = array())
+    public function write($template, $data = [], $stream = null)
     {
         $t = $this;
 
@@ -117,7 +117,6 @@ class T extends Collection
         }
 
         include $resolved;
-
         if (count($this->sections) === 0) {
             throw new Exception('No section to render for template: '.$template);
         }
@@ -125,7 +124,29 @@ class T extends Collection
         reset($this->sections);
         $name = key($this->sections);
 
+
         $fn = $this->sections[$name];
+
+        if (isset($stream)) {
+            ob_start();
+        }
+
         $fn($data);
+
+        if (isset($stream)) {
+            $stream->write(ob_get_clean());
+        }
+    }
+
+    /**
+     * Render template
+     * @param  string
+     * @return void
+     */
+    public function render($template, $data = [])
+    {
+        ob_start();
+        $this->write($template, $data);
+        return ob_get_clean();
     }
 }
