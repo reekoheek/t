@@ -127,14 +127,12 @@ class T extends Collection
 
         $fn = $this->sections[$name];
 
-        if (isset($stream)) {
+        if (null !== $stream) {
             ob_start();
-        }
-
-        $fn($data);
-
-        if (isset($stream)) {
+            $fn($data);
             $stream->write(ob_get_clean());
+        } else {
+            $fn($data);
         }
     }
 
@@ -148,5 +146,19 @@ class T extends Collection
         ob_start();
         $this->write($template, $data);
         return ob_get_clean();
+    }
+
+    public function delegate($delegator)
+    {
+        $this->delegator = $delegator;
+    }
+
+    public function __call($method, $args)
+    {
+        if (null === $this->delegator) {
+            throw new Exception('No delegator for the method call');
+        }
+
+        return call_user_func_array([$this->delegator, $method], $args);
     }
 }

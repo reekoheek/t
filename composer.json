@@ -2,7 +2,7 @@
     "name": "reekoheek/t",
     "require": {
         "php": "^5.4",
-        "reekoheek/util": "^1.1.0"
+        "reekoheek/util": "~1.2.0"
     },
     "require-dev": {
     },

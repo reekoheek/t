@@ -5,42 +5,46 @@ namespace T;
 use Exception;
 use Bono\Http\Context;
 use Bono\Renderer\RendererInterface;
+use Bono\App;
 
 class Renderer implements RendererInterface
 {
-    protected $options;
+    protected $app;
 
-    protected $t;
+    protected $options;
 
     public function __construct(array $options)
     {
         $this->options = $options;
     }
 
-    protected function getT()
+    protected function createT()
     {
-        if (is_null($this->t)) {
-            $this->t = new T($this->options['middleware']['templatePaths']);
-        }
+        $templatePaths = $this->options['middleware']['templatePaths'];
+        $templatePaths[] = __DIR__.'/../templates';
 
-        return $this->t;
+        return new T($templatePaths);
     }
 
-    public function resolve($template)
+    public function resolve($template, $t = null)
     {
+        $t = $t ?: $this->createT();
+
         $segments = explode('/', $template);
         if (2 === count($segments)) {
-            $resolved = $this->getT()->resolve($template);
-            if (is_null($resolved)) {
-                $resolved = $this->getT()->resolve('shared/'.$segments[1]);
+            $resolved = $t->resolve($template);
+
+            if (null === $resolved) {
+                $template = '__shared__/'.$segments[1];
+                $resolved = $t->resolve($template);
             }
 
-            if (isset($resolved)) {
-                return ['shared/'.$segments[1], $resolved];
+            if (null !== $resolved) {
+                return [$template, $resolved];
             }
         } else {
-            $resolved = $this->getT()->resolve($template);
-            if (isset($resolved)) {
+            $resolved = $t->resolve($template);
+            if (null !== $resolved) {
                 return [$template, $resolved];
             }
         }
@@ -48,17 +52,21 @@ class Renderer implements RendererInterface
 
     public function write(Context $context)
     {
-        $resolved = $this->resolve($context['response.template']);
-        if (is_null($resolved)) {
-            throw new Exception('Template not found: ' . $context['response.template']);
+        $t = $this->createT();
+
+        $resolved = $this->resolve($context['@renderer.template'], $t);
+        if (null === $resolved) {
+            throw new Exception('Template not found: ' . $context['@renderer.template']);
         }
-        $t = $this->getT();
+        $t->delegate($context);
         $t['context'] = $context;
         $t['bundle'] = $context['route.bundle'];
         $t->write($resolved[0], $context->getState(), $context);
     }
 
     public function render($template, array $data = []) {
-        return $this->getT()->render($template, $data);
+        $t = $this->createT();
+
+        return $t->render($template, $data);
     }
 }
