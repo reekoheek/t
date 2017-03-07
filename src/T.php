@@ -75,7 +75,10 @@ class T extends Collection
         if (!$resolved) {
             throw new Exception('Cannot extend unresolved template: '.$template);
         }
+
+        ob_start();
         include $resolved;
+        ob_end_clean();
     }
 
     /**
@@ -116,7 +119,10 @@ class T extends Collection
             throw new Exception('Cannot render unresolved template: '.$template);
         }
 
+        ob_start();
         include $resolved;
+        ob_end_clean();
+
         if (count($this->sections) === 0) {
             throw new Exception('No section to render for template: '.$template);
         }
